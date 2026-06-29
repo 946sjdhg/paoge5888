@@ -203,8 +203,8 @@
             <div style="margin-top:20px; font-size:0.85rem; color:#00ff7f; font-weight:bold;">Line：@946sjdhg 砲哥</div>
             
             <div class="version-info">
-                <div class="version-item"><span>戰神賽特 2 版本號：</span><span class="version-val">1.1.2_4</span></div>
-                <div class="version-item"><span>戰神賽特 版本號：</span><span class="version-val">3.4.29_3</span></div>
+                <div class="version-item"><span>戰神賽特 2 版本號：</span><span class="version-val">v1.1.5</span></div>
+                <div class="version-item"><span>戰神賽特 版本號：</span><span class="version-val">3.4.31</span></div>
             </div>
         </div>
     </div>
@@ -482,7 +482,6 @@
     }
 
     function goToRooms(gameName) {
-        // 只有主動退回選擇大廳並點擊其他遊戲時，才會判定清除舊有的 VIP 房鎖定
         vipRoomActive = null;
         
         document.getElementById('gameSelect').classList.add('hidden');
@@ -496,7 +495,6 @@
     }
 
     function loadOrGenerateRooms(gameName, forceRefresh = false) {
-        // 修正：移除此處原有的 `vipRoomActive = null;` 確保刷新時獨立好房不會被清除
         const cacheKey = `rooms_${currentUserId}_${gameName}`;
         const savedData = localStorage.getItem(cacheKey);
         
@@ -505,7 +503,7 @@
         } else {
             const newRooms = [];
             const roomIds = [];
-            const maxRoom = (gameName === '戰神賽特') ? 2500 : 3500;
+            const maxRoom = (gameName === '戰神賽特') ? 1300 : 4212;
             
             const shuffledSignals = [...APP_BUILTIN_SIGNALS].sort(() => 0.5 - Math.random());
             let signalIndex = 0;
@@ -551,7 +549,6 @@
         roomList.innerHTML = "";
         const fragment = document.createDocumentFragment();
         
-        // 如果當前遊戲大廳與 VIP 房相符，將 VIP 好房釘在列表最上方
         if (vipRoomActive && document.getElementById('currentGameTitle').innerText === vipRoomActive.game) {
             const vDiv = document.createElement('div');
             vDiv.className = 'room-item vip-style';
@@ -586,7 +583,6 @@
         }
     }
 
-    // ⚡ 頂級流暢架構優化：點擊瞬間無痛切換房間，背景異步處理扣點
     async function manualRefresh() {
         const cap = document.getElementById('userCapital').value;
         if (!cap || cap <= 0) return alert("請先輸入目前本金！");
@@ -594,13 +590,11 @@
         const refreshBtn = document.getElementById('manualRefreshBtn');
         const gameName = document.getElementById('currentGameTitle').innerText;
         
-        // 本地預扣次數，達到毫秒級介面切換
         if(userRefreshQuota > 0) {
             userRefreshQuota--;
             updateQuotaDisplay();
         }
 
-        // 瞬間更新房間列表（因為前面移除了 vipRoomActive = null，此處 VIP 好房會被完好保留並重新釘選）
         loadOrGenerateRooms(gameName, true); 
 
         refreshBtn.disabled = true;
@@ -722,7 +716,7 @@
         } 
 
         const gameName = document.getElementById('currentGameTitle').innerText;
-        const maxRoom = (gameName === '戰神賽特') ? 2500 : 3500;
+        const maxRoom = (gameName === '戰神賽特') ? 1300 : 4212;
         
         const vipId = Math.floor(Math.random() * maxRoom) + 1;
         const vipRate = Math.floor(Math.random() * 3) + 97; 
